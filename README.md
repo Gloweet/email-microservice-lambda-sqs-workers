@@ -3,7 +3,7 @@
 This project is a notification microservice based on AWS Lambda.
 - Can be used from any Node.js and V8 Isolate backend using `@aws-sdk/client-sqs` (see an example in [Cloudflare Workers](./worker/src/index.ts)).
 - Supports multiple email APIs: **Resend** and **Amazon SES**.
-- If using Cloudflare Workers, you can use the `worker-email-microservice` based on `@aws-sdk/client-sqs`.
+- If using **Cloudflare Workers**, you can use the `worker-email-microservice` based on `@aws-sdk/client-sqs`.
   Any other worker can make an HTTP call to `worker-email-microservice`'s binding to send an email:
   ```typescript
   const res = await context.cloudflare.env.NOTIFICATION.fetch(
