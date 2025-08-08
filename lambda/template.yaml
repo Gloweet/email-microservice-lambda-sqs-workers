@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  A serverless application that processes email notifications from an SQS queue.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Tracing: Active
+    LoggingConfig:
+      LogFormat: JSON
+    Environment:
+      Variables:
+        EMAIL_SERVICE: "resend"
+        FROM_NAME: "Your Firm"
+        FROM_EMAIL: "contact@example.com"
+        ALLOWED_SENDERS_EMAILS: "contact@example.com"
+        RESEND_SECRET_NAME: "prod-notification-service-resend-api-key"
+
+Resources:
+  NotificationServiceLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: prod-notification-service-sh-lambda
+      CodeUri: ./
+      Handler: dist/src/index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SQSQueue.Arn
+            BatchSize: 2
+            Enabled: true
+      Policies:
+        - SQSPollerPolicy:
+            QueueName: !GetAtt SQSQueue.QueueName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: "*"
+        - Statement:
+            - Effect: Allow
+              Action: secretsmanager:GetSecretValue
+              Resource: arn:aws:secretsmanager:YOUR_REGION:YOUR_ACCOUNT_ID:secret:prod-notification-service-*
+
+  SQSQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: prod-notification-service-sh-queue
+      VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DeadLetterQueue.Arn
+        maxReceiveCount: 3
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: prod-notification-service-sh-deadletter-queue
+      MessageRetentionPeriod: 1209600 # 14 days in seconds
+
+Outputs:
+  NotificationServiceLambda:
+    Description: Notification Service Lambda Function ARN
+    Value: !GetAtt NotificationServiceLambda.Arn
+
+  SQSQueueURL:
+    Description: URL of the SQS Queue
+    Value: !Ref SQSQueue
+
+  SQSQueueARN:
+    Description: ARN of the SQS Queue
+    Value: !GetAtt SQSQueue.Arn
+
+  DeadLetterQueueURL:
+    Description: URL of the Dead Letter Queue
+    Value: !Ref DeadLetterQueue
+
+  DeadLetterQueueARN:
+    Description: ARN of the Dead Letter Queue
+    Value: !GetAtt DeadLetterQueue.Arn

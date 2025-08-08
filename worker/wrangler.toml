@@ -1,0 +1,49 @@
+name = "notification"
+main = "./src/index.ts"
+compatibility_date = "2024-05-13"
+workers_dev = false
+
+[observability.logs]
+enabled = true
+
+[dev]
+ip = "localhost"
+local_protocol = "http"
+port = 61023
+
+[vars]
+ENVIRONMENT = "dev"
+EMAIL_SERVICE = "resend"            # or "amazon-ses"
+RESEND_MAX_NUMBER_OF_MESSAGES = "3"
+SES_MAX_NUMBER_OF_MESSAGES = "10"
+# Add these secrets locally:
+# wrangler secret put AWS_SES_ACCESS_KEY_ID
+# wrangler secret put AWS_SES_SECRET_ACCESS_KEY
+# wrangler secret put AWS_SQS_ACCESS_KEY_ID
+# wrangler secret put AWS_SQS_SECRET_ACCESS_KEY
+# wrangler secret put SQS_QUEUE_URL
+# wrangler secret put SQS_DLQ_URL
+# wrangler secret put LOKI_SECRET
+
+[version_metadata]
+binding = "CF_VERSION_METADATA"
+
+
+[env.production]
+name = "notification"
+minify = true
+
+[env.production.vars]
+ENVIRONMENT = "production"
+EMAIL_SERVICE = "resend"                             # or "amazon-ses"
+RESEND_MAX_NUMBER_OF_MESSAGES = "3"
+SES_MAX_NUMBER_OF_MESSAGES = "10"
+LOKI_URL = "https://logs-prod-eu-west-0.grafana.net"
+# wrangler secret put -e production AWS_SQS_ACCESS_KEY_ID
+# wrangler secret put -e production AWS_SQS_SECRET_ACCESS_KEY
+# wrangler secret put -e production AWS_SQS_REGION
+# wrangler secret put -e production AWS_SQS_QUEUE_URL
+# wrangler secret put -e production LOKI_SECRET
+
+[env.production.version_metadata]
+binding = "CF_VERSION_METADATA"

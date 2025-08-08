@@ -1,0 +1,13 @@
+AWS_SQS_ACCESS_KEY_ID=
+AWS_SQS_SECRET_ACCESS_KEY=
+AWS_SQS_REGION=eu-west-3
+AWS_SQS_QUEUE_URL=
+LOKI_SECRET=
+LOKI_URL=
+
+# Push secrets
+# npx wrangler secret put -e production AWS_SQS_ACCESS_KEY_ID
+# npx wrangler secret put -e production AWS_SQS_SECRET_ACCESS_KEY
+# npx wrangler secret put -e production AWS_SQS_REGION
+# npx wrangler secret put -e production AWS_SQS_QUEUE_URL
+# npx wrangler secret put -e production LOKI_SECRET

@@ -1,0 +1,41 @@
+{
+  "name": "notification-sqs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc && sam build",
+    "deploy": "pnpm run build && sam deploy --disable-rollback",
+    "delete": "aws cloudformation delete-stack --stack-name prod-notification-service-sh --region eu-west-3",
+    "log": "sam logs -n NotificationServiceLambda --stack-name prod-notification-service-sh --tail",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "PheonBest",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.846.0",
+    "aws-sdk": "^2.1692.0",
+    "jest": "^30.0.4",
+    "resend": "^4.6.0",
+    "yup": "^1.6.1"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "setupFiles": [
+      "dotenv/config"
+    ],
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.150",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.14",
+    "dotenv": "^17.2.0",
+    "ts-jest": "^29.4.0",
+    "uuid": "^11.1.0"
+  }
+}
