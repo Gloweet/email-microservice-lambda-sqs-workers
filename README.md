@@ -38,8 +38,6 @@ This project is a notification microservice based on AWS Lambda.
 
 Enjoy using this project! I hope you'll find it useful.
 
-# Example
-
 # Open to contributions
 - Please submit a pull request with your changes.
 
